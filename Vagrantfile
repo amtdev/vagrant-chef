@@ -32,7 +32,7 @@ Vagrant::Config.run do  | config |
                 :server_name    => "blog.dev",
                 :docroot        => "/home/vagrant/webroot",
 
-                # Choose database type.  Choices are mysql, postresgql, sqlite, none
+                # Choose database type.  Choices are mysql, postgresql, sqlite, none
                 :dbserver_type  => "mysql",
 
                 # Choose webserver type.  Choices are nginx, mysql
