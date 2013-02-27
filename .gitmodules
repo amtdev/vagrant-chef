@@ -58,3 +58,6 @@
 [submodule "cookbooks/sqlite"]
 	path = cookbooks/sqlite
 	url = https://github.com/opscode-cookbooks/sqlite.git
+[submodule "cookbooks/chef-php-extra"]
+	path = cookbooks/chef-php-extra
+	url = https://github.com/inviqa/chef-php-extra.git

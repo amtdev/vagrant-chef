@@ -8,12 +8,15 @@ docroot = "#{node['app']['docroot']}"
 # Check for db server type and proceed
 case node['app']['dbserver_type']
 when 'mysql'
+    include_recipe "php::module_mysql"
     include_recipe "mysql::server"
     include_recipe "app::mysql"
 when 'postgresql'
+    include_recipe "php::module_pgsql"
     include_recipe "postgresql::server"
     include_recipe "app::postgresql"
 when 'sqlite'
+    include_recipe "php::module_sqlite3"
     include_recipe "sqlite"
 end
 
