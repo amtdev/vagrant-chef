@@ -32,7 +32,7 @@ Vagrant::Config.run do  | config |
                 :dbserver_type  => "mysql",
                 :webserver_type => "apache",
                 :server_name    => "blog.dev",
-                :docroot        => "/home/vagrant/webroot/blog/public",
+                :docroot        => "/home/vagrant/webroot",
             },
             :mysql => { 
                 :server_root_password   => "password",
