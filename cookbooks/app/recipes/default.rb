@@ -1,3 +1,6 @@
+# This recipe is the starter for all configuration.  It will sort out the web server type, 
+# database server type, and desired framework.
+
 # start it off...
 app_name = "#{node['app']['name']}"
 docroot = "#{node['app']['docroot']}"

@@ -30,7 +30,12 @@ Vagrant::Config.run do  | config |
                 :db_pass        => "blog",
                 :db_name        => "blog",
                 :server_name    => "blog.dev",
+
+                # Set docroot and working_dir. 
+                # Docroot is where webserver points.  
+                # Working dir is where entire project lives - might be the same, but could be one directory higher...
                 :docroot        => "/home/vagrant/webroot",
+                :working_dir    => "/home/vagrant/webroot",
 
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
                 :dbserver_type  => "mysql",

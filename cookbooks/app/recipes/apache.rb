@@ -6,3 +6,7 @@ web_app app_name do
     template "apache.conf.erb" 
     log_dir node['apache']['log_dir'] 
 end
+
+apache_site "000-default" do
+  enable false
+end
