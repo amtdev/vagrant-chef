@@ -18,7 +18,6 @@ installed (version 4.2 and later are preferable). The setup from that point forw
     7. Wait a few minutes   
     8. $ sudo su and then # echo "192.168.33.10  [app_name].dev" >> /etc/hosts
 
-NOTE: I have not tested this with PostgreSQL, just MySQL.
 
 ## Options
 
@@ -28,5 +27,4 @@ NOTE: I have not tested this with PostgreSQL, just MySQL.
 ## To Do
 
 There are a LOT of things to do.
-* Finish testing with PostgreSQL
 * Allow user to specify PHP version to be installed, instead of just taking the default 5.3.10 version.
