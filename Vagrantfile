@@ -43,6 +43,16 @@ Vagrant::Config.run do  | config |
 
                 # Choose webserver type.  Choices are nginx, mysql
                 :webserver_type => "nginx"
+
+                # Options for loading DB SQL file -- Only works for MySQL
+                # Should be seed the database on first run?
+                :db_load        => "true",
+                
+                # Filename for seed file.  Should be in the working directory
+                :db_infile      => "seed.sql",
+
+                # What table name should be used to verify that the seed db doesn't need to be applied.
+                :db_table       => "some_table"
             },
             :mysql => { 
                 :server_root_password   => "password",
