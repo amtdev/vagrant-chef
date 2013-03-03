@@ -35,14 +35,14 @@ Vagrant::Config.run do  | config |
                 # Set docroot and working_dir. 
                 # Docroot is where webserver points.  
                 # Working dir is where entire project lives - might be the same, but could be one directory higher...
-                :docroot        => "/home/vagrant/webroot",
+                :docroot        => "/home/vagrant/webroot/src/public",
                 :working_dir    => "/home/vagrant/webroot",
 
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
-                :dbserver_type  => "sqlite",
+                :dbserver_type  => "mysql",
 
                 # Choose webserver type.  Choices are nginx, mysql
-                :webserver_type => "nginx"
+                :webserver_type => "nginx",
 
                 # Options for loading DB SQL file -- Only works for MySQL
                 # Should be seed the database on first run?
