@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BuildIt" default="build" basedir="." description="Generic Build Script">
+    <!-- General Properties -->
+    <property name="message" value="Hello World!"/>
+    <property name="srcDir" value="./src"/>
+    <property name="buildDir" value="./build"/>
+
+    <!-- Properties for FTP Deployment -->
+    <property name="ftp.host" value="ftp.example.com"/>
+    <property name="ftp.port" value="21"/>
+    <property name="ftp.username" value="user"/>
+    <property name="ftp.password" value="password"/>
+    <property name="ftp.dir" value="/public_html/"/>
+    <property name="ftp.mode" value="ascii"/>
+
+    <!-- Default Run List -->
+    <target name="welcome">
+        <echo msg="${message}"/>
+    </target>
+
+    <!-- For Stage / QA / Production Build -->
+    <!-- Run all tests -->
+    <target name="test">
+        <echo msg="Running Unit Tests..."/>
+        <phpunit printsummary="true" haltonfailure="true">
+            <batchtest>
+                <fileset dir="./src/app/tests">
+                    <include name="*Test.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+    </target>
+
+    <!-- Tag Version in SVN -->
+    
+    <!-- Copy all files to build directory -->
+    <fileset id="srcFiles" dir="${srcDir}">
+        <exclude name="*/.svn" />
+    </fileset>
+
+    <target name="build" depends="welcome">
+        <echo msg="Copying to build directory..."/>
+        <copy todir="${buildDir}">
+            <fileset refid="srcFiles" />
+        </copy>
+    </target>
+
+    <!-- Replace Token Value in Footer -->
+    <!-- Minify and Concatenate CSS -->
+    <!-- Minify and Concatenate JS -->
+
+    <!-- FTP files to target directory -->
+    <fileset id="buildFiles" dir="${buildDir}" />
+    <ftpdeploy
+            host="${ftp.host}"
+            port="${ftp.port}"
+            username="${ftp.username}"
+            password="${ftp.password}"
+            dir="${ftp.dir}"
+            mode="${ftp.mode}">
+        <fileset refid="buildFiles"/>
+    </ftpdeploy>
+
+    <!-- Update SymLink -->
+
+</project>
