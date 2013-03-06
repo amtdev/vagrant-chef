@@ -41,6 +41,12 @@
     <target name="build" depends="welcome">
         <echo msg="Copying to build directory..."/>
         <copy todir="${buildDir}">
+            <!-- Replace Token in Footer with SVNTAG -->
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="SVNTAG" value="{$svnTag}" />
+                </replacetokens>
+            </filterchain>
             <fileset refid="srcFiles" />
         </copy>
     </target>
