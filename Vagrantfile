@@ -18,6 +18,7 @@ Vagrant::Config.run do  | config |
         chef.add_recipe "php::module_gd"
         chef.add_recipe "app" 
         chef.add_recipe "chef-php-extra::development"
+        chef.add_recipe "chef-php-extra::package"
         chef.add_recipe "composer"
         chef.add_recipe "phing"
         chef.add_recipe "php-fpm"
