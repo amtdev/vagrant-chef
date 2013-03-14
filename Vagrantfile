@@ -66,6 +66,21 @@ Vagrant::Config.run do  | config |
                 :password   => {
                     :postgres   => "password"
                 }
+            },
+            # List default PHP packages.  All others installed as dependencies in other packages
+            :php => {
+                :packages => [
+                    "php5-cgi",
+                    "php5",
+                    "php5-dev",
+                    "php5-cli",
+                    "php-pear",
+                    "php5-gd",
+                    "php5-curl",
+                    "php-apc",
+                    "libssh2-php"
+                ],
+                :ius => '5.4'
             }
         }
     end
