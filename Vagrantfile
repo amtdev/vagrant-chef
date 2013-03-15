@@ -13,9 +13,6 @@ Vagrant::Config.run do  | config |
         chef.add_recipe "build-essential"
         chef.add_recipe "git"
         chef.add_recipe "php"
-        chef.add_recipe "php::module_apc"
-        chef.add_recipe "php::module_curl"
-        chef.add_recipe "php::module_gd"
         chef.add_recipe "app" 
         chef.add_recipe "chef-php-extra::development"
         chef.add_recipe "composer"
@@ -54,6 +51,8 @@ Vagrant::Config.run do  | config |
                 # What table name should be used to verify that the seed db doesn't need to be applied.
                 :db_table       => "some_table"
             },
+
+            # If using MySQL, set defaults.
             :mysql => { 
                 :server_root_password   => "password",
                 :server_debian_password => "password",
@@ -61,10 +60,28 @@ Vagrant::Config.run do  | config |
                 :bind_address           => "192.168.33.10",
                 :allow_remote_root      => true
             },
+
+            # If using PostgreSQL, set defaults
             :postgresql => {
                 :password   => {
                     :postgres   => "password"
                 }
+            },
+
+            # List default PHP packages.  All others installed as dependencies in other packages
+            :php => {
+                :packages => [
+                    "php5-cgi",
+                    "php5",
+                    "php5-dev",
+                    "php5-cli",
+                    "php-pear",
+                    "php5-gd",
+                    "php5-curl",
+                    "php-apc",
+                    "libssh2-php"
+                ],
+                :ius    => 5.4
             }
         }
     end

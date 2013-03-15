@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="BuildIt" default="build" basedir="." description="Generic Build Script">
+<project name="BuildIt" default="dev" basedir="." description="Generic Build Script">
+    
     <!-- General Properties -->
-    <property name="message" value="Hello World!"/>
-    <property name="srcDir" value="./src"/>
-    <property name="buildDir" value="./build"/>
+    <property name="srcDir" value="./src" />
+    <property name="buildDir" value="./build" />
+    <property name="svn.repository.url" value="" />
+    <property name="ext.mysqldump" value="/usr/bin/mysql" />
+    <property name="site.name" value="example.com" />
 
-    <!-- Properties for FTP Deployment -->
-    <property name="ftp.host" value="ftp.example.com"/>
-    <property name="ftp.port" value="21"/>
-    <property name="ftp.username" value="user"/>
-    <property name="ftp.password" value="password"/>
-    <property name="ftp.dir" value="/public_html/"/>
-    <property name="ftp.mode" value="ascii"/>
-
-    <!-- Default Run List -->
-    <target name="welcome">
-        <echo msg="${message}"/>
+    <!-- Deploy Options -->
+    <!-- Dev Box -->
+    <target name="dev" depends="test">
+        <property name="hostfile" value="config/dev.properties" />
+        
+        <!-- SSH into dev box and run SVN Update -->  
+        <ssh
+            username="${ssh.user}"
+            password="${ssh.password}"
+            host="${host}"
+            command="${docRoot} svn up" /> 
     </target>
 
-    <!-- For Stage / QA / Production Build -->
+    <!-- Staging -->
+    <target name="stage" depends="deploy">
+        <property name="hostfile" value="config/stage.properties" />
+    </target>
+
+    <!-- Production -->
+    <target name="prod" depends="deploy">
+        <property name="hostfile" value="config/prod.properties" />
+    </target>
+
+    <!-- Tasks and such... -->
     <!-- Run all tests -->
     <target name="test">
         <echo msg="Running Unit Tests..."/>
@@ -29,44 +42,154 @@
                 </fileset>
             </batchtest>
         </phpunit>
-    </target>
+    </target>    
 
-    <!-- Tag Version in SVN -->
-    
-    <!-- Copy all files to build directory -->
-    <fileset id="srcFiles" dir="${srcDir}">
-        <exclude name="*/.svn" />
-    </fileset>
+    <!-- Prep build directory and files -->
+    <target name="prepare" depends="test">
+        <echo msg="Preparing files for deployment..." />
 
-    <target name="build" depends="welcome">
-        <echo msg="Copying to build directory..."/>
+        <!-- Ask for a tag label to copy the current trunk -->
+        <property name="tagLabel" value="false" override="true" />
+        <if>
+            <isfalse value="${tagLabel}"/>
+            <then>
+                <fail message="Invalid tag name!" />
+            </then>
+        </if>
+
+        <echo msg="Preparing tag ${tagLabel}..." />
+
+        <!-- Ask for SVN Username -->
+        <property name="svn.repository.username" value="false" override="true" />
+        <if>
+            <isfalse value="${svn.repository.username}"/>
+            <then>
+                <fail message="You must provide your username." />
+            </then>
+        </if>
+
+        <!-- Ask for SVN Password -->
+        <property name="svn.repository.password" value="false" override="true" />
+        <if>
+            <isfalse value="${svn.repository.password}"/>
+            <then>
+                <fail message="You must provide your password." />
+            </then>
+        </if>
+
+        <!-- Copy trunk to the new tag under tags/tagLabel -->
+        <svncopy
+            force="true"
+            nocache="true"
+            repositoryurl="${svn.repository.url}/trunk"
+            todir="${svn.repository.url}/tags/${tagLabel}"
+            username="${svn.repository.username}"
+            password="${svn.repository.password}"
+            message="Tag release ${tagLabel}" />
+
+        <!-- Switch the working copy repo to the newly created tag -->
+        <svnswitch
+            repositoryurl="${svn.repository.url}/tags/${tagLabel}"
+            username="${svn.repository.username}"
+            password="${svn.repository.password}"
+            todir="." />
+
+        <!-- Update documentation using PHPDocumentor -->
+        <echo msg="Updating API documentation..." />
+        <phpdoc2 title="API Documentation"
+            destdir="docs"
+            template="responsive">
+        </phpdoc2>
+
+        <!-- Commit changes -->
+        <echo msg="Committing docs and changes..."/>
+        <svncommit
+            workingcopy="."
+            message="Finish editing tag ${tagLabel}" />
+        <echo message="Committed revision: ${svn.committedrevision}"/>
+
+        <echo msg="Tag ${tagLabel} completed!" />
+
+        <fileset id="srcFiles" dir="${srcDir}" includeemptydirs="true">
+            <exclude name="*/.svn" />
+            <exclude name="build.xml" />
+            <exclude name="seed.sql" />
+            <exclude name="config/**" />
+        </fileset>
+
+        <echo msg="Copying files to build directory..." />
         <copy todir="${buildDir}">
-            <!-- Replace Token in Footer with SVNTAG -->
+            <!-- File Prep Operations -->
             <filterchain>
+                <!-- Replace Token in Footer with SVNTAG -->
                 <replacetokens begintoken="@@" endtoken="@@">
                     <token key="SVNTAG" value="{$svnTag}" />
                 </replacetokens>
+
+                <!-- Strip whitespace and comments -->
+                <stripphpcomments />
+                <stripwhitespace />
+
+                <!-- Concat js and css files -->
+
             </filterchain>
             <fileset refid="srcFiles" />
         </copy>
-    </target>
+    </target>  
 
-    <!-- Replace Token Value in Footer -->
-    <!-- Minify and Concatenate CSS -->
-    <!-- Minify and Concatenate JS -->
+    <!-- Deploy Files to Target -->
+    <target name="deploy" depends="prepare">
+        <echo msg="Deploying files to target server..." />
 
-    <!-- FTP files to target directory -->
-    <fileset id="buildFiles" dir="${buildDir}" />
-    <ftpdeploy
-            host="${ftp.host}"
-            port="${ftp.port}"
-            username="${ftp.username}"
-            password="${ftp.password}"
-            dir="${ftp.dir}"
-            mode="${ftp.mode}">
-        <fileset refid="buildFiles"/>
-    </ftpdeploy>
+        <!-- Make target directory -->
+        <echo msg="Making target directory..." />
+        <ssh
+            username="${ssh.user}"
+            password="${ssh.password}"
+            host="${host}"
+            command="mkdir build_{$svnTag}" />
 
-    <!-- Update SymLink -->
+        <!-- FTP files to target directory -->
+        <echo msg="Moving files..." />
+        <fileset id="buildFiles" dir="${buildDir}" />
+        <ftpdeploy
+                host="${host}"
+                port="${ftp.port}"
+                username="${ftp.username}"
+                password="${ftp.password}"
+                dir="${ftp.dir}/build_{$svnTag}"
+                mode="${ftp.mode}"
+                depends="deploy"
+                name="ftp">
+            <fileset refid="buildFiles"/>
+        </ftpdeploy>
 
+        <!-- Back up DB -->
+        <echo msg="Backing up database..." />
+        <ssh
+            username="${ssh.user}"
+            password="${ssh.password}"
+            host="${host}"
+            command="${ext.mysqldump} --quick --password=${db.password} --user=${db.user} ${db.name} > ${db.backup.dir}/${site.name}_build_${svnTag}_dump.sql" />
+        <echo message="Database dumped ${db.backup.dir}/${site.name}.${environment}.sql" />
+        
+        <!-- Run Migrations, if necessary -->
+        <echo msg="Executing DB migration script..." />
+        <ssh
+            username="${ssh.user}"
+            password="${ssh.password}"
+            host="${host}"
+            command="${ext.mysqldump} --quick --password=${db.password} --user=${db.user} ${db.name} < ${site.name}_build_${svnTag}_migrate.sql" />
+        <echo message="Database migration complete" />
+
+        <!-- Update SymLink --> 
+        <echo msg="Updating Symlink..." /> 
+        <ssh
+            username="${ssh.user}"
+            password="${ssh.password}"
+            host="${host}"
+            command="ln -f -s current build_${svnTag}" /> 
+        <echo msg="Done!" />
+
+    </target> 
 </project>
