@@ -15,6 +15,7 @@ Vagrant::Config.run do  | config |
         chef.add_recipe "php"
         chef.add_recipe "app" 
         chef.add_recipe "chef-php-extra::development"
+        chef.add_recipe "chef-php-extra::package"
         chef.add_recipe "composer"
         chef.add_recipe "phing"
         chef.add_recipe "php-fpm"
@@ -67,7 +68,7 @@ Vagrant::Config.run do  | config |
                     :postgres   => "password"
                 }
             },
-
+            
             # List default PHP packages.  All others installed as dependencies in other packages
             :php => {
                 :packages => [
@@ -81,7 +82,7 @@ Vagrant::Config.run do  | config |
                     "php-apc",
                     "libssh2-php"
                 ],
-                :ius    => 5.4
+                :ius => '5.4'
             }
         }
     end
