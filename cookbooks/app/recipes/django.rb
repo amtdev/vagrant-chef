@@ -56,8 +56,6 @@ when 'apache'
 when 'nginx'
     # Set up Nginx virtual host
     include_recipe "nginx"
-    include_recipe "gunicorn"
-    include_recipe "app::gunicorn"
 
     # Initialize NGINX with correct template
     nginx_site "default" do

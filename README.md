@@ -32,4 +32,3 @@ installed (version 4.2 and later are preferable). The setup from that point forw
 There are a LOT of things to do.
 * Allow user to specify PHP version to be installed, instead of just taking the default 5.3.10 version.
 * Allow the user to specify django version
-* Configure virtualenv options
