@@ -12,13 +12,8 @@ Vagrant::Config.run do  | config |
         chef.add_recipe "apt"
         chef.add_recipe "build-essential"
         chef.add_recipe "git"
-        chef.add_recipe "php"
-        chef.add_recipe "app" 
-        chef.add_recipe "chef-php-extra::development"
-        chef.add_recipe "chef-php-extra::package"
-        chef.add_recipe "composer"
-        chef.add_recipe "phing"
-        chef.add_recipe "php-fpm"
+        chef.add_recipe "runit"
+        chef.add_recipe "app::django"
         chef.add_recipe "vim"
         
         chef.json = {
@@ -33,7 +28,7 @@ Vagrant::Config.run do  | config |
                 # Set docroot and working_dir. 
                 # Docroot is where webserver points.  
                 # Working dir is where entire project lives - might be the same, but could be one directory higher...
-                :docroot        => "/home/vagrant/webroot/src/public",
+                :docroot        => "/home/vagrant/webroot",
                 :working_dir    => "/home/vagrant/webroot",
 
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
@@ -80,9 +75,9 @@ Vagrant::Config.run do  | config |
                     "php5-gd",
                     "php5-curl",
                     "php-apc",
+                    "php-xsl",
                     "libssh2-php"
-                ],
-                :ius => '5.4'
+                ]
             }
         }
     end

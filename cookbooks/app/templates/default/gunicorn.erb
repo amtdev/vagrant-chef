@@ -1,0 +1,10 @@
+#!/bin/sh
+
+GUNICORN=/usr/local/bin/gunicorn
+ROOT=<%= node['app']['docroot'] %>/<%= node['app']['name'] %>
+PID=/var/run/gunicorn.pid
+
+if [ -f $PID ]; then rm $PID; fi
+
+cd $ROOT
+exec $GUNICORN -c /etc/gunicorn/<%= node['app']['name'] %>.py --pid=$PID $APP

@@ -61,3 +61,9 @@
 [submodule "cookbooks/chef-php-extra"]
 	path = cookbooks/chef-php-extra
 	url = https://github.com/inviqa/chef-php-extra.git
+[submodule "cookbooks/python"]
+	path = cookbooks/python
+	url = https://github.com/opscode-cookbooks/python
+[submodule "cookbooks/gunicorn"]
+	path = cookbooks/gunicorn
+	url = https://github.com/opscode-cookbooks/gunicorn
