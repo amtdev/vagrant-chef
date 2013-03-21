@@ -12,6 +12,7 @@ include_recipe "python"
 case node['app']['dbserver_type']
 when 'mysql'
     include_recipe "mysql::server"
+    include_recipe "database::mysql"
     include_recipe "app::mysql"
 
     # install python-mysqldb
@@ -20,10 +21,11 @@ when 'mysql'
     end
 when 'postgresql'
     include_recipe "postgresql::server"
+    include_recipe "database::postgresql"
     include_recipe "app::postgresql"
 
     # install the psycopg2 library for postgresql
-    package "psycopg2" do
+    package "python-psycopg2" do
         action :install
     end
 when 'sqlite'
@@ -82,6 +84,6 @@ python_pip "docutils" do
 end
 
 # install Django 1.5
-python_pip "django" do
+python_pip "Django" do
   version "1.5"
 end

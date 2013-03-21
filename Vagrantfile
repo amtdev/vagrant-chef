@@ -32,7 +32,7 @@ Vagrant::Config.run do  | config |
                 :working_dir    => "/home/vagrant/webroot",
 
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
-                :dbserver_type  => "mysql",
+                :dbserver_type  => "postgresql",
 
                 # Choose webserver type.  Choices are nginx, mysql
                 :webserver_type => "nginx",
@@ -61,7 +61,13 @@ Vagrant::Config.run do  | config |
             :postgresql => {
                 :password   => {
                     :postgres   => "password"
-                }
+                },
+                :pg_hba => [
+                    {:type => 'local', :db => 'all', :user => 'postgres', :addr => nil, :method => 'md5'},
+                    {:type => 'local', :db => 'all', :user => 'all', :addr => nil, :method => 'md5'},
+                    {:type => 'host', :db => 'all', :user => 'all', :addr => '127.0.0.1/32', :method => 'md5'},
+                    {:type => 'host', :db => 'all', :user => 'all', :addr => '::1/128', :method => 'md5'}
+                ]
             },
             
             # List default PHP packages.  All others installed as dependencies in other packages
@@ -75,7 +81,7 @@ Vagrant::Config.run do  | config |
                     "php5-gd",
                     "php5-curl",
                     "php-apc",
-                    "php-xsl",
+                    "php5-xsl",
                     "libssh2-php"
                 ]
             }

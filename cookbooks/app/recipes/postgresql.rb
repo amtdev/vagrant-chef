@@ -1,39 +1,32 @@
+db_name = node['app']['db_name']
+db_user = node['app']['db_user']
+db_pass = node['app']['db_pass']
+
 execute "restart postgres" do
     command "sudo /etc/init.d/postgresql restart"
 end
 
-bash "create database" do
-  user 'postgres'
-  code <<-EOH
-echo "createdb -U postgres -O #{node['postgresql']['password']['postgres']} #{node['app']['db_name']};" | psql
-  EOH
-  action :run
+postgresql_connection_info = {:host => "127.0.0.1",
+                              :port => node['postgresql']['config']['port'],
+                              :username => 'postgres',
+                              :password => node['postgresql']['password']['postgres']}
+
+postgresql_database db_name do
+    connection postgresql_connection_info
+    action :create
 end
 
-bash "create user" do
-  user 'postgres'
-  code <<-EOH
-echo "create user #{node['app']['db_user']} with password '#{node['app']['db_pass']}';" | psql
-  EOH
-  action :run
+# create a postgresql user but grant no privileges
+postgresql_database_user db_user do
+    connection postgresql_connection_info
+    password db_pass
+    action :create
 end
 
-bash "grant permissions" do
-  user 'postgres'
-  code <<-EOH
-echo "grant all privileges on database #{node['app']['db_name']} to #{node['app']['db_user']};" | psql
-  EOH
-  action :run
-end
-
-# Load default database if desired, but only on first run
-if node['app']['db_load'] == "true"
-    ruby_block "seed #{node['app']['name']} database" do
-        block do
-            %x[psql -d #{node['app']['db_name']} -a -f #{node['app']['working_dir']}/#{node['app']['db_infile']}]
-        end
-        not_if "psql \"SELECT 1 FROM #{node['app']['db_name']}.#{node['app']['db_table_name']}\" | \
-            grep 1"
-        action :create
-    end
+# grant all privileges on all tables in foo db
+postgresql_database_user db_user do
+    connection postgresql_connection_info
+    database_name db_name
+    privileges [:all]
+    action :grant
 end

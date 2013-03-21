@@ -67,3 +67,6 @@
 [submodule "cookbooks/gunicorn"]
 	path = cookbooks/gunicorn
 	url = https://github.com/opscode-cookbooks/gunicorn
+[submodule "cookbooks/database"]
+	path = cookbooks/database
+	url = https://github.com/opscode-cookbooks/database

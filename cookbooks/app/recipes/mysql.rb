@@ -1,22 +1,28 @@
 # Set up Database
+db_name = node['app']['db_name']
+db_user = node['app']['db_user']
+db_pass = node['app']['db_pass']
+
+mysql_connection_info = {:host => "localhost",
+                         :username => 'root',
+                         :password => node['mysql']['server_root_password']}
+
 # Create app database
-ruby_block "create_#{node['app']['name']}_db" do
-    block do
-        %x[mysql -uroot -p#{node['mysql']['server_root_password']} -e "CREATE DATABASE #{node['app']['db_name']};"]
-    end 
-    not_if "mysql -uroot -p#{node['mysql']['server_root_password']} -e \"SHOW DATABASES LIKE '#{node['app']['db_name']}'\" | grep #{node['app']['db_name']}";
-    action :create
+mysql_database db_name do
+  connection mysql_connection_info
+  action :create
 end
 
-# Grant mysql privileges for web user 
-ruby_block "add_localhost_#{node['app']['name']}_permissions" do
-    block do
-        %x[mysql -u root -p#{node['mysql']['server_root_password']} -e "GRANT ALL \
-          ON #{node['app']['db_name']}.* TO '#{node['app']['db_user']}'@'localhost' IDENTIFIED BY '#{node['app']['db_pass']}';"]
-    end
-    not_if "mysql -u root -p#{node['mysql']['server_root_password']} -e \"SELECT user, host FROM mysql.user\" | \
-        grep #{node['app']['db_user']} | grep localhost"
-    action :create
+mysql_database_user db_user do
+  connection mysql_connection_info
+  password db_pass
+  action :create
+end
+
+mysql_database_user db_user do
+  connection mysql_connection_info
+  password db_pass
+  action :grant
 end
 
 # Load default database if desired, but only on first run
