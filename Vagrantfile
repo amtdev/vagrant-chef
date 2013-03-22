@@ -34,11 +34,11 @@ Vagrant::Config.run do  | config |
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
                 :dbserver_type  => "postgresql",
 
-                # Choose webserver type.  Choices are nginx, mysql
+                # Choose webserver type.  Choices are nginx, apache
                 :webserver_type => "nginx",
 
                 # Options for loading DB SQL file -- Only works for MySQL
-                # Should be seed the database on first run?
+                # Should we seed the database on first run?
                 :db_load        => "true",
                 
                 # Filename for seed file.  Should be in the working directory
