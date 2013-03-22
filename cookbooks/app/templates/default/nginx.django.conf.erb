@@ -6,16 +6,10 @@ server {
 
     # media and static directly
     location /media/ {
-        # if asset versioning is used
-        if ($query_string) {
-            expires max;
-        }
+        alias <%= node['app']['docroot'] %>/<%= node['app']['name'] %>/media/;
     }
     location /static/ {
-        # if asset versioning is used
-        if ($query_string) {
-            expires max;
-        }
+        alias <%= node['app']['docroot'] %>/<%= node['app']['name'] %>/static/;
     }
 
     location / {
