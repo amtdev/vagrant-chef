@@ -1,8 +1,6 @@
 Vagrant::Config.run do  | config |
     config.vm.box = "precise32"
-    config.vm.box_url = "http://files.vagrantup.com/precise32.box"
-
-    config.vm.customize ["modifyvm", :id, "--memory", "512"]    
+    config.vm.box_url = "http://files.vagrantup.com/precise32.box" 
 
     config.vm.network :hostonly, "192.168.33.10"
     config.vm.share_folder "webroot" , "/home/vagrant/webroot", "./webroot/", :nfs => true
@@ -84,6 +82,11 @@ Vagrant::Config.run do  | config |
                     "php5-xsl",
                     "libssh2-php"
                 ]
+            },
+            
+            # Ensure that build-essential runs 
+            :build_essential => {
+                :compiletime => true
             }
         }
     end
