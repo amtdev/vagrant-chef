@@ -11,33 +11,33 @@ Vagrant::Config.run do  | config |
         chef.add_recipe "build-essential"
         chef.add_recipe "git"
         chef.add_recipe "runit"
-        chef.add_recipe "app::django"
+        chef.add_recipe "app::php"
         chef.add_recipe "vim"
         
         chef.json = {
             :app => {
-                :name           => "blog",
-                :db_user        => "blog",
-                :db_pass        => "blog",
-                :db_name        => "blog",
-                :server_name    => "blog.dev",
-                :server_aliases => "*.blog.dev",
+                :name           => "wardrobe",
+                :db_user        => "wardrobe",
+                :db_pass        => "wardrobe",
+                :db_name        => "wardrobe",
+                :server_name    => "wardrobe.dev",
+                :server_aliases => "*.wardrobe.dev",
 
                 # Set docroot and working_dir. 
                 # Docroot is where webserver points.  
                 # Working dir is where entire project lives - might be the same, but could be one directory higher...
-                :docroot        => "/home/vagrant/webroot",
+                :docroot        => "/home/vagrant/webroot/public",
                 :working_dir    => "/home/vagrant/webroot",
 
                 # Choose database type.  Choices are mysql, postgresql, sqlite, none
-                :dbserver_type  => "postgresql",
+                :dbserver_type  => "mysql",
 
                 # Choose webserver type.  Choices are nginx, apache
-                :webserver_type => "nginx",
+                :webserver_type => "apache",
 
                 # Options for loading DB SQL file -- Only works for MySQL
                 # Should we seed the database on first run?
-                :db_load        => "true",
+                :db_load        => "false",
                 
                 # Filename for seed file.  Should be in the working directory
                 :db_infile      => "seed.sql",
